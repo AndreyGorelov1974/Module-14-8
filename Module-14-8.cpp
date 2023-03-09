@@ -46,5 +46,6 @@ int main() {
 	//основной цикл, пока winnerFlag не станет 1 или 2
 	while ((winnerFlag != 1)&&(winnerFlag != 2)) {
 
+
 	}
 }
