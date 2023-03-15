@@ -30,6 +30,25 @@ bool field_2[10][10];*/
 #include <iostream>
 #include <string>
 
+//функция отображения игрового поля
+void display_play_field(char arr[][10]) {
+
+	std::cout << " A B C D E F G H I J" << std::endl;
+	for (int i = 0; i < 10; ++i) {
+		std::cout << i;
+		for (int j = 0; j < 10; ++j) {
+			std::cout << arr[i][j] << " ";
+		}
+		std::cout << std::endl;
+	}
+	return;
+}
+
+//функция рассстановки коралей на игровом поле
+void set_ship_to_play_field(char arr[][10], std::string player_name) {
+	display_play_field(arr);
+	return;
+}
 
 int main() {
 	//игровое поле первого игрока
@@ -42,10 +61,14 @@ int main() {
 
 	std::cout << "Welcome to the Battleship game!" << std::endl;
 
+	set_ship_to_play_field(play_Field_1, "Player 1");
+	set_ship_to_play_field(play_Field_2, "Player 2");
+
+
 
 	//основной цикл, пока winnerFlag не станет 1 или 2
 	while ((winnerFlag != 1)&&(winnerFlag != 2)) {
 
-
+		winnerFlag = 1;
 	}
 }
