@@ -30,6 +30,10 @@ bool field_2[10][10];*/
 #include <iostream>
 #include <string>
 
+std::string get_coordinates(void) {
+	return;
+}
+
 //функция отображения игрового поля
 void display_play_field(char arr[][10]) {
 
@@ -46,7 +50,12 @@ void display_play_field(char arr[][10]) {
 
 //функция рассстановки коралей на игровом поле
 void set_ship_to_play_field(char arr[][10], std::string player_name) {
+	std::string coordinates = "";
+	system("cls");
 	display_play_field(arr);
+	std::cout << player_name << " enter coordinates begin ship: ";
+	coordinates = get_coordinates();
+
 	return;
 }
 
@@ -60,6 +69,17 @@ int main() {
 	int winnerFlag = 0;
 
 	std::cout << "Welcome to the Battleship game!" << std::endl;
+
+	int numberShip = 4;
+	int numberDeck = 1;
+
+	for (int i = 0; i < 10; ++i) {
+		std::cout << i;
+		for (int j = 0; j < 10; ++j) {
+			std::cout << arr[i][j] << " ";
+		}
+		std::cout << std::endl;
+	}
 
 	set_ship_to_play_field(play_Field_1, "Player 1");
 	set_ship_to_play_field(play_Field_2, "Player 2");
