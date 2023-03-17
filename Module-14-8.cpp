@@ -30,8 +30,11 @@ bool field_2[10][10];*/
 #include <iostream>
 #include <string>
 
-std::string get_coordinates(void) {
-	return;
+//функция получения координат, возвращает двузначное число,
+//первая цифра - строка игрового поля
+//вторая цифра - колонка игрового поля
+int get_coordinates(void) {
+	return 22;
 }
 
 //функция отображения игрового поля
@@ -49,21 +52,45 @@ void display_play_field(char arr[][10]) {
 }
 
 //функция рассстановки коралей на игровом поле
-void set_ship_to_play_field(char arr[][10], std::string player_name) {
-	std::string coordinates = "";
+void set_ship_to_play_field(char arr[][10], int deck, std::string player_name) {
 	system("cls");
 	display_play_field(arr);
 	std::cout << player_name << " enter coordinates begin ship: ";
-	coordinates = get_coordinates();
+	int coordinates = get_coordinates();
+	int line = coordinates / 10;
+	int column = coordinates % 10;
+
+
 
 	return;
 }
 
 int main() {
 	//игровое поле первого игрока
-	char play_Field_1[10][10];
+	char play_Field_1[10][10] = {
+	{'+','+','+','+','+','+','+','+','+','+'},
+	{'+','+','+','+','+','+','+','+','+','+'},
+	{'+','+','+','+','+','+','+','+','+','+'},
+	{'+','+','+','+','+','+','+','+','+','+'},
+	{'+','+','+','+','+','+','+','+','+','+'},
+	{'+','+','+','+','+','+','+','+','+','+'},
+	{'+','+','+','+','+','+','+','+','+','+'},
+	{'+','+','+','+','+','+','+','+','+','+'},
+	{'+','+','+','+','+','+','+','+','+','+'},
+	{'+','+','+','+','+','+','+','+','+','+'}, };
 	//игровое поле второго игрока
-	char play_Field_2[10][10];
+	char play_Field_2[10][10]={
+	{'+','+','+','+','+','+','+','+','+','+'},
+	{'+','+','+','+','+','+','+','+','+','+'},
+	{'+','+','+','+','+','+','+','+','+','+'},
+	{'+','+','+','+','+','+','+','+','+','+'},
+	{'+','+','+','+','+','+','+','+','+','+'},
+	{'+','+','+','+','+','+','+','+','+','+'},
+	{'+','+','+','+','+','+','+','+','+','+'},
+	{'+','+','+','+','+','+','+','+','+','+'},
+	{'+','+','+','+','+','+','+','+','+','+'},
+	{'+','+','+','+','+','+','+','+','+','+'},
+};
 
 	//флаг игрока который выйграл
 	int winnerFlag = 0;
@@ -73,21 +100,26 @@ int main() {
 	int numberShip = 4;
 	int numberDeck = 1;
 
-	for (int i = 0; i < 10; ++i) {
-		std::cout << i;
-		for (int j = 0; j < 10; ++j) {
-			std::cout << arr[i][j] << " ";
+	//расстановка кораблей первого игрока
+	//внешний цикл по количеству палуб
+	for (int i = 1; i < 5; ++i) {
+		//внутренний цикл по количеству кораблей
+		for (int j = 5 - i; j > 0; --j) {
+			set_ship_to_play_field(play_Field_1, i, "Player 1");
 		}
-		std::cout << std::endl;
 	}
 
-	set_ship_to_play_field(play_Field_1, "Player 1");
-	set_ship_to_play_field(play_Field_2, "Player 2");
+	//расстановка кораблей второго игрока
+	for (int i = 1; i < 5; ++i) {
+		for (int j = 5 - i; j > 0; --j) {
+			set_ship_to_play_field(play_Field_1, i, "Player 2");
+		}
+	}
 
 
 
 	//основной цикл, пока winnerFlag не станет 1 или 2
-	while ((winnerFlag != 1)&&(winnerFlag != 2)) {
+	while ((winnerFlag != 1) && (winnerFlag != 2)) {
 
 		winnerFlag = 1;
 	}
