@@ -37,6 +37,13 @@ int get_coordinates(void) {
 	return 22;
 }
 
+//функция получения направления корабля при расстановке, возвращает cимвол
+//r - направо
+//d - вниз
+int get_direction(void) {
+	return 'r';
+}
+
 //функция отображения игрового поля
 void display_play_field(char arr[][10]) {
 
@@ -56,11 +63,15 @@ void set_ship_to_play_field(char arr[][10], int deck, std::string player_name) {
 	system("cls");
 	display_play_field(arr);
 	std::cout << player_name << " enter coordinates begin ship: ";
-	int coordinates = get_coordinates();
-	int line = coordinates / 10;
-	int column = coordinates % 10;
+	while (true) {
+		int coordinates = get_coordinates();
+		int line = coordinates / 10;
+		int column = coordinates % 10;
+		if (deck != 1) {
+			char direction = get_direction();
+		}
 
-
+	}
 
 	return;
 }
@@ -77,7 +88,7 @@ int main() {
 	{'+','+','+','+','+','+','+','+','+','+'},
 	{'+','+','+','+','+','+','+','+','+','+'},
 	{'+','+','+','+','+','+','+','+','+','+'},
-	{'+','+','+','+','+','+','+','+','+','+'}, };
+	{'+','+','+','+','+','+','+','+','+','+'},};
 	//игровое поле второго игрока
 	char play_Field_2[10][10]={
 	{'+','+','+','+','+','+','+','+','+','+'},
@@ -89,8 +100,7 @@ int main() {
 	{'+','+','+','+','+','+','+','+','+','+'},
 	{'+','+','+','+','+','+','+','+','+','+'},
 	{'+','+','+','+','+','+','+','+','+','+'},
-	{'+','+','+','+','+','+','+','+','+','+'},
-};
+	{'+','+','+','+','+','+','+','+','+','+'},};
 
 	//флаг игрока который выйграл
 	int winnerFlag = 0;
