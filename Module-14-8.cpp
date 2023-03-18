@@ -77,11 +77,11 @@ void set_ship_to_play_field(char arr[][10], int deck, std::string player_name) {
 		//получаем номер строки и столбца на игровом поле
 		line = coordinates / 10;
 		column = coordinates % 10;
-		//если 1 палуба то направление кораля не нужно
+		//если 1 палуба то направление корабля не нужно
 		if (deck != 0) {
 			direction = get_direction();
 		}
-		//если выходит за границы игрового поля предупреждаеми возвращаемся к вводу координат
+		//если выходит за границы игрового поля предупреждаеми и возвращаемся к вводу координат
 		if ((direction == 'r' && (column + deck) > 9) || (direction == 'd' && (line + deck) > 9)) {
 			std::cout << "It is impossible to put a ship in this place!" << std::endl;
 		}
@@ -114,6 +114,7 @@ void set_ship_to_play_field(char arr[][10], int deck, std::string player_name) {
 				bottomBorder = 9;
 			}
 			bool correct = true;
+			//проверяем наличие кораблей в поле корабля
 			for (int i = topBorder; i <= bottomBorder; ++i) {
 				for (int j = leftBorder; j <= rightBorder; ++j) {
 					if (arr[i][j] != '~') {
@@ -121,24 +122,29 @@ void set_ship_to_play_field(char arr[][10], int deck, std::string player_name) {
 					}
 				}
 			}
+			//если рядом нет кораблей выходим из цикла
 			if (correct) {
 				break;
 			}
+			//иначе перходим снова к вводу координат
 			else {
 				std::cout << "It is impossible to put a ship in this place!" << std::endl;
 			}
 		}
 	}
+	//заполняем всё поле символами промаха
 	for (int i = topBorder; i <= bottomBorder; ++i) {
 		for (int j = leftBorder; j <= rightBorder; ++j) {
 			arr[i][j] = '*';
 		}
 	}
+	//устанавливаем горизонтальный  корабль
 	if (direction == 'r') {
 		for (int i = column; i <= column + deck; ++i) {
 			arr[line][i] = 'O';
 		}
 	}
+	//устанавливаем вертикальный корабль
 	if (direction == 'd') {
 		for (int i = line; i <= line + deck; ++i) {
 			arr[i][column] = 'O';
