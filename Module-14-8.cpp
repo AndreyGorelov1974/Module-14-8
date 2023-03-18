@@ -34,7 +34,9 @@ bool field_2[10][10];*/
 //первая цифра - строка игрового поля
 //вторая цифра - колонка игрового поля
 int get_coordinates(void) {
-	return 33;
+	int coordinates = 33;
+	std::cin >> coordinates;
+	return coordinates;
 }
 
 //функция получения направления корабля при расстановке, возвращает cимвол
@@ -117,7 +119,7 @@ void set_ship_to_play_field(char arr[][10], int deck, std::string player_name) {
 			//проверяем наличие кораблей в поле корабля
 			for (int i = topBorder; i <= bottomBorder; ++i) {
 				for (int j = leftBorder; j <= rightBorder; ++j) {
-					if (arr[i][j] != '~') {
+					if (arr[i][j] == 'O') {
 						correct = false;
 					}
 				}
