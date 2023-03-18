@@ -49,9 +49,14 @@ int get_direction(void) {
 //функция отображения игрового поля
 void display_play_field(char arr[][10]) {
 
-	std::cout << " A B C D E F G H I J" << std::endl;
+	std::cout << "  A B C D E F G H I J" << std::endl;
 	for (int i = 0; i < 10; ++i) {
-		std::cout << i;
+		if (i < 9) {
+			std::cout << i + 1 << " ";
+		}
+		else {
+			std::cout << i + 1;
+		}
 		for (int j = 0; j < 10; ++j) {
 			std::cout << arr[i][j] << " ";
 		}
