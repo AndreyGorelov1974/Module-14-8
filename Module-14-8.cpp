@@ -34,7 +34,7 @@ bool field_2[10][10];*/
 //первая цифра - строка игрового поля
 //вторая цифра - колонка игрового поля
 int get_coordinates(void) {
-	return 22;
+	return 33;
 }
 
 //функция получения направления корабля при расстановке, возвращает cимвол
@@ -58,37 +58,108 @@ void display_play_field(char arr[][10]) {
 	return;
 }
 
-//функция рассстановки коралей на игровом поле
+//функция рассстановки кораблей на игровом поле
 void set_ship_to_play_field(char arr[][10], int deck, std::string player_name) {
 	system("cls");
 	display_play_field(arr);
 	std::cout << player_name << " enter coordinates begin ship: ";
+	--deck;
+	//инициализируем границы поля проверки соседних кораблей
+	int leftBorder = 0;
+	int rightBorder = 0;
+	int topBorder = 0;
+	int bottomBorder = 0;
+	int line = 0;
+	int column = 0;
+	char direction = 'r';
 	while (true) {
 		int coordinates = get_coordinates();
-		int line = coordinates / 10;
-		int column = coordinates % 10;
-		if (deck != 1) {
-			char direction = get_direction();
+		//получаем номер строки и столбца на игровом поле
+		line = coordinates / 10;
+		column = coordinates % 10;
+		//если 1 палуба то направление кораля не нужно
+		if (deck != 0) {
+			direction = get_direction();
 		}
-
+		//если выходит за границы игрового поля предупреждаеми возвращаемся к вводу координат
+		if ((direction == 'r' && (column + deck) > 9) || (direction == 'd' && (line + deck) > 9)) {
+			std::cout << "It is impossible to put a ship in this place!" << std::endl;
+		}
+		else {
+			//задаём границы поля проверки соседних кораблей при направлении корабля горизонтально
+			if (direction == 'r') {
+				topBorder = line - 1;
+				bottomBorder = line + 1;
+				leftBorder = column - 1;
+				rightBorder = column + deck + 1;
+			}
+			//задаём границы поля проверки соседних кораблей при направлении корабля вертикально
+			if (direction == 'd') {
+				topBorder = line - 1;
+				bottomBorder = line + deck + 1;
+				leftBorder = column - 1;
+				rightBorder = column + 1;
+			}
+			//корректируем границы если корабль расположен на краю
+			if (column == 0) {
+				leftBorder = 0;
+			}
+			if (column == 9) {
+				rightBorder = 9;
+			}
+			if (line == 0) {
+				topBorder = 0;
+			}
+			if (line == 9) {
+				bottomBorder = 9;
+			}
+			bool correct = true;
+			for (int i = topBorder; i <= bottomBorder; ++i) {
+				for (int j = leftBorder; j <= rightBorder; ++j) {
+					if (arr[i][j] != '~') {
+						correct = false;
+					}
+				}
+			}
+			if (correct) {
+				break;
+			}
+			else {
+				std::cout << "It is impossible to put a ship in this place!" << std::endl;
+			}
+		}
 	}
-
+	for (int i = topBorder; i <= bottomBorder; ++i) {
+		for (int j = leftBorder; j <= rightBorder; ++j) {
+			arr[i][j] = '*';
+		}
+	}
+	if (direction == 'r') {
+		for (int i = column; i <= column + deck; ++i) {
+			arr[line][i] = 'O';
+		}
+	}
+	if (direction == 'd') {
+		for (int i = line; i <= line + deck; ++i) {
+			arr[i][column] = 'O';
+		}
+	}
 	return;
 }
 
 int main() {
 	//игровое поле первого игрока
 	char play_Field_1[10][10] = {
-	{'+','+','+','+','+','+','+','+','+','+'},
-	{'+','+','+','+','+','+','+','+','+','+'},
-	{'+','+','+','+','+','+','+','+','+','+'},
-	{'+','+','+','+','+','+','+','+','+','+'},
-	{'+','+','+','+','+','+','+','+','+','+'},
-	{'+','+','+','+','+','+','+','+','+','+'},
-	{'+','+','+','+','+','+','+','+','+','+'},
-	{'+','+','+','+','+','+','+','+','+','+'},
-	{'+','+','+','+','+','+','+','+','+','+'},
-	{'+','+','+','+','+','+','+','+','+','+'},};
+	{'~','~','~','~','~','~','~','~','~','~'},
+	{'~','~','~','~','~','~','~','~','~','~'},
+	{'~','~','~','~','~','~','~','~','~','~'},
+	{'~','~','~','~','~','~','~','~','~','~'},
+	{'~','~','~','~','~','~','~','~','~','~'},
+	{'~','~','~','~','~','~','~','~','~','~'},
+	{'~','~','~','~','~','~','~','~','~','~'},
+	{'~','~','~','~','~','~','~','~','~','~'},
+	{'~','~','~','~','~','~','~','~','~','~'},
+	{'~','~','~','~','~','~','~','~','~','~'},};
 	//игровое поле второго игрока
 	char play_Field_2[10][10]={
 	{'+','+','+','+','+','+','+','+','+','+'},
