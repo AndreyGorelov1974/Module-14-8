@@ -34,8 +34,9 @@ bool field_2[10][10];*/
 //первая цифра - строка игрового поля
 //вторая цифра - колонка игрового поля
 int get_coordinates(void) {
-	int coordinates = 33;
-	std::cin >> coordinates;
+	do {
+		std::cin >> coordinates;
+	}
 	return coordinates;
 }
 
@@ -69,7 +70,7 @@ void display_play_field(char arr[][10]) {
 void set_ship_to_play_field(char arr[][10], int deck, std::string player_name) {
 	system("cls");
 	display_play_field(arr);
-	std::cout << player_name << " enter coordinates begin ship: ";
+	std::cout << player_name << " enter coordinates begin " << deck << " deck ship: ";
 	--deck;
 	//инициализируем границы поля проверки соседних кораблей
 	int leftBorder = 0;
@@ -111,7 +112,7 @@ void set_ship_to_play_field(char arr[][10], int deck, std::string player_name) {
 			if (column == 0) {
 				leftBorder = 0;
 			}
-			if (column == 9) {
+			if (rightBorder > 9) {
 				rightBorder = 9;
 			}
 			if (line == 0) {
@@ -206,7 +207,7 @@ int main() {
 	//расстановка кораблей второго игрока
 	for (int i = 1; i < 5; ++i) {
 		for (int j = 5 - i; j > 0; --j) {
-			set_ship_to_play_field(play_Field_1, i, "Player 2");
+			set_ship_to_play_field(play_Field_2, i, "Player 2");
 		}
 	}
 
