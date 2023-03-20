@@ -30,14 +30,21 @@ bool field_2[10][10];*/
 #include <iostream>
 #include <string>
 
-//функция получения координат, возвращает двузначное число,
-//первая цифра - строка игрового поля
-//вторая цифра - колонка игрового поля
+//функция получения координат, возвращает трёхзначное число 1XX,
+//вторая цифра - строка игрового поля
+//третья цифра - колонка игрового поля
 int get_coordinates(void) {
-	do {
-		std::cin >> coordinates;
+	std::string  str = "";
+	std::cin >> str;
+	while ((str.length() == 2 && (str[0] < 65 || str[0] > 75 || str[1] < 49 || str[1] > 57))
+		|| (str.length() == 3 && (str[0] < 65 || str[0] > 75 || str[1] != 49 || str[2] != 48))
+		|| str.length() > 3) {
+		std::cout << "Such coordinates are incorrect. Try again: " << std::endl;
+		std::cin >> str;
 	}
-	return coordinates;
+	int column = (int)str[0] - 65;
+	int line = (str.length() == 2) ? (int)str[1] - 49 : 9;
+	return 100 + line * 10 + column;
 }
 
 //функция получения направления корабля при расстановке, возвращает cимвол
@@ -83,8 +90,8 @@ void set_ship_to_play_field(char arr[][10], int deck, std::string player_name) {
 	while (true) {
 		int coordinates = get_coordinates();
 		//получаем номер строки и столбца на игровом поле
-		line = coordinates / 10;
 		column = coordinates % 10;
+		line = (coordinates % 100) / 10;
 		//если 1 палуба то направление корабля не нужно
 		if (deck != 0) {
 			direction = get_direction();
@@ -197,9 +204,9 @@ int main() {
 	{'~','~','~','~','~','~','~','~','~','~'},
 	{'~','~','~','~','~','~','~','~','~','~'},
 	{'~','~','~','~','~','~','~','~','~','~'},
-	{'~','~','~','~','~','~','~','~','~','~'},};
+	{'~','~','~','~','~','~','~','~','~','~'}, };
 	//игровое поле второго игрока
-	char playFieldPlayer_2[10][10]={
+	char playFieldPlayer_2[10][10] = {
 	{'~','~','~','~','~','~','~','~','~','~'},
 	{'~','~','~','~','~','~','~','~','~','~'},
 	{'~','~','~','~','~','~','~','~','~','~'},
@@ -215,9 +222,6 @@ int main() {
 	int winnerFlag = 0;
 
 	std::cout << "Welcome to the Battleship game!" << std::endl;
-
-	int numberShip = 4;
-	int numberDeck = 1;
 
 	//расстановка кораблей первого игрока
 	//внешний цикл по количеству палуб
