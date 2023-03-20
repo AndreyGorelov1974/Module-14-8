@@ -51,7 +51,14 @@ int get_coordinates(void) {
 //r - направо
 //d - вниз
 int get_direction(void) {
-	return 'r';
+	std::string str = "";
+	std::cout << "Set the direction of your ship's location, r - to the right or d - down" << std::endl;
+	std::cin >> str;
+	while (str.length() != 1 || (str[0] != 'r' && str[0] != 'd')) {
+		std::cout << "This direction is incorrect. Set r - to the right, or d - down: " << std::endl;
+		std::cin >> str;
+	}
+	return str[0];
 }
 
 //функция отображения игрового поля
