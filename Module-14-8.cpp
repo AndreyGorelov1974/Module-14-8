@@ -35,7 +35,6 @@ bool field_2[10][10];*/
 //третья цифра - колонка игрового поля
 int get_coordinates(void) {
 	std::string  str = "";
-	//srand(unsigned(time(0)));
 	std::cin >> str;
 	while ((str.length() == 2 && (str[0] < 65 || str[0] > 75 || str[1] < 49 || str[1] > 57))
 		|| (str.length() == 3 && (str[0] < 65 || str[0] > 75 || str[1] != 49 || str[2] != 48))
@@ -45,8 +44,6 @@ int get_coordinates(void) {
 	}
 	int column = (int)str[0] - 65;
 	int line = (str.length() == 2) ? (int)str[1] - 49 : 9;
-	//int column = rand() % 9;
-	//int line = rand() % 9;
 	return 100 + line * 10 + column;
 }
 
@@ -55,15 +52,12 @@ int get_coordinates(void) {
 //d - вниз
 int get_direction(void) {
 	std::string str = "";
-	//srand(unsigned(time(0)));
 	std::cout << "Set the direction of your ship's location, r - to the right or d - down" << std::endl;
 	std::cin >> str;
 	while (str.length() != 1 || (str[0] != 'r' && str[0] != 'd')) {
 		std::cout << "This direction is incorrect. Set r - to the right, or d - down: " << std::endl;
 		std::cin >> str;
 	}
-	//int temp = rand() % 2;
-	//temp == 1 ? str[0] = 'r' : str[0] = 'd';
 	return str[0];
 }
 
