@@ -35,7 +35,8 @@ bool field_2[10][10];*/
 //третья цифра - колонка игрового поля
 int get_coordinates(void) {
 	std::string  str = "";
-	std::cin >> str;
+	srand(unsigned(time(0)));
+	/*std::cin >> str;
 	while ((str.length() == 2 && (str[0] < 65 || str[0] > 75 || str[1] < 49 || str[1] > 57))
 		|| (str.length() == 3 && (str[0] < 65 || str[0] > 75 || str[1] != 49 || str[2] != 48))
 		|| str.length() > 3) {
@@ -43,7 +44,9 @@ int get_coordinates(void) {
 		std::cin >> str;
 	}
 	int column = (int)str[0] - 65;
-	int line = (str.length() == 2) ? (int)str[1] - 49 : 9;
+	int line = (str.length() == 2) ? (int)str[1] - 49 : 9;*/
+	int column = rand() % 9;
+	int line = rand() % 9;
 	return 100 + line * 10 + column;
 }
 
@@ -52,12 +55,15 @@ int get_coordinates(void) {
 //d - вниз
 int get_direction(void) {
 	std::string str = "";
-	std::cout << "Set the direction of your ship's location, r - to the right or d - down" << std::endl;
+	srand(unsigned(time(0)));
+	/*std::cout << "Set the direction of your ship's location, r - to the right or d - down" << std::endl;
 	std::cin >> str;
 	while (str.length() != 1 || (str[0] != 'r' && str[0] != 'd')) {
 		std::cout << "This direction is incorrect. Set r - to the right, or d - down: " << std::endl;
 		std::cin >> str;
-	}
+	}*/
+	int temp = rand() % 2;
+	temp == 1 ? str[0] = 'r' : str[0] = 'd';
 	return str[0];
 }
 
@@ -105,7 +111,7 @@ void set_ship_to_play_field(char arr[][10], int deck, std::string player_name) {
 		}
 		//если выходит за границы игрового поля предупреждаеми и возвращаемся к вводу координат
 		if ((direction == 'r' && (column + deck) > 9) || (direction == 'd' && (line + deck) > 9)) {
-			std::cout << "It is impossible to put a ship in this place!" << std::endl;
+			//std::cout << "It is impossible to put a ship in this place!" << std::endl;
 		}
 		else {
 			//задаём границы поля проверки соседних кораблей при направлении корабля горизонтально
@@ -150,7 +156,7 @@ void set_ship_to_play_field(char arr[][10], int deck, std::string player_name) {
 			}
 			//иначе перходим снова к вводу координат
 			else {
-				std::cout << "It is impossible to put a ship in this place!" << std::endl;
+				//std::cout << "It is impossible to put a ship in this place!" << std::endl;
 			}
 		}
 	}
@@ -232,19 +238,20 @@ int main() {
 
 	//расстановка кораблей первого игрока
 	//внешний цикл по количеству палуб
-	for (int i = 1; i < 5; ++i) {
+	//for (int i = 1; i < 5; ++i) {
+	int i = 1;
 		//внутренний цикл по количеству кораблей
 		for (int j = 5 - i; j > 0; --j) {
 			set_ship_to_play_field(setShipsFieldPlayer_1, i, "Player 1");
 		}
-	}
+	//}
 
 	//расстановка кораблей второго игрока
-	for (int i = 1; i < 5; ++i) {
+	//for (int i = 1; i < 5; ++i) {
 		for (int j = 5 - i; j > 0; --j) {
 			set_ship_to_play_field(setShipsFieldPlayer_2, i, "Player 2");
 		}
-	}
+	//}
 
 
 
