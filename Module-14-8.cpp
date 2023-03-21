@@ -181,6 +181,12 @@ void set_ship_to_play_field(char arr[][10], int deck, std::string player_name) {
 	return;
 }
 
+//функция выстрела, если есть попадание возвращает true
+bool shot_to_ship(char arr1[][10], char arr2[][10]) {
+
+	return false;
+}
+
 int main() {
 	//поле расстановки кораблей первого игрока
 	char setShipsFieldPlayer_1[10][10] = {
@@ -231,8 +237,12 @@ int main() {
 	{'~','~','~','~','~','~','~','~','~','~'},
 	{'~','~','~','~','~','~','~','~','~','~'}, };
 
-	//флаг игрока который выйграл
-	int winnerFlag = 0;
+	//количество палуб оставшихся у 1 и 2 игроков
+	int player_1Deck = 1;
+	int player_2Deck = 1;
+
+	//флаг указывающий у кого текущий ход
+	std::string cureentMove = "Player 1";
 
 	std::cout << "Welcome to the Battleship game!" << std::endl;
 
@@ -253,11 +263,30 @@ int main() {
 		}
 	//}
 
-
-
 	//основной цикл, пока winnerFlag не станет 1 или 2
-	while ((winnerFlag != 1) && (winnerFlag != 2)) {
+	while (player_1Deck > 0 && player_2Deck > 0) {
+		system("cls");
+		//отображение игрового поля в зависимости от хода
+		cureentMove == "Player 1" ? display_play_field(playFieldPlayer_1) : display_play_field(playFieldPlayer_2);
 
-		winnerFlag = 1;
+		std::cout << cureentMove << " enter the coordinates of your shot ";
+		int coordinates = get_coordinates();
+		//получаем номер строки и столбца на игровом поле
+		int column = coordinates % 10;
+		int line = (coordinates % 100) / 10;
+		//переменная для результата выстрела
+		bool shot = false;
+		//вызываем функцию выстрела в зависимости от хода
+		cureentMove == "Player 1" ? shot = shot_to_ship(playFieldPlayer_1, setShipsFieldPlayer_2) : shot = shot_to_ship(playFieldPlayer_2, setShipsFieldPlayer_1);
+
+		//eclb есть попадание
+		if (shot) {
+			//ход остаётся у текущего игрока
+			cureentMove == "Player 1" ? cureentMove = "Player 1" : cureentMove = "Player 2";
+		}
+		else {
+			//при промахе передаём ход другому игроку
+			cureentMove == "Player 1" ? cureentMove = "Player 2" : cureentMove = "Player 1";
+		}
 	}
 }
