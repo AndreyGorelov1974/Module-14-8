@@ -161,11 +161,11 @@ void set_ship_to_play_field(char arr[][10], int deck, std::string player_name) {
 		}
 	}
 	//заполняем всё поле символами промаха
-	for (int i = topBorder; i <= bottomBorder; ++i) {
+	/*for (int i = topBorder; i <= bottomBorder; ++i) {
 		for (int j = leftBorder; j <= rightBorder; ++j) {
 			arr[i][j] = '*';
 		}
-	}
+	}*/
 	//устанавливаем горизонтальный  корабль
 	if (direction == 'r') {
 		for (int i = column; i <= column + deck; ++i) {
