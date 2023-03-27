@@ -85,6 +85,7 @@ void set_ship_to_play_field(char arr[][10], int deck, std::string player_name) {
 	system("cls");
 	display_play_field(arr);
 	std::cout << player_name << " enter coordinates begin " << deck << " deck ship: ";
+	//уменьшаем количество палуб для упрощения расчётов
 	--deck;
 	//инициализируем границы поля проверки соседних кораблей
 	int leftBorder = 0;
@@ -93,6 +94,7 @@ void set_ship_to_play_field(char arr[][10], int deck, std::string player_name) {
 	int bottomBorder = 0;
 	int line = 0;
 	int column = 0;
+	//направление по умолчанию горизонтальное
 	char direction = 'r';
 	while (true) {
 		int coordinates = get_coordinates();
@@ -105,7 +107,7 @@ void set_ship_to_play_field(char arr[][10], int deck, std::string player_name) {
 		}
 		//если выходит за границы игрового поля предупреждаеми и возвращаемся к вводу координат
 		if ((direction == 'r' && (column + deck) > 9) || (direction == 'd' && (line + deck) > 9)) {
-			//std::cout << "It is impossible to put a ship in this place!" << std::endl;
+			std::cout << "It is impossible to put a ship in this place!" << std::endl;
 		}
 		else {
 			//задаём границы поля проверки соседних кораблей при направлении корабля горизонтально
@@ -139,7 +141,7 @@ void set_ship_to_play_field(char arr[][10], int deck, std::string player_name) {
 			//проверяем наличие кораблей в поле корабля
 			for (int i = topBorder; i <= bottomBorder; ++i) {
 				for (int j = leftBorder; j <= rightBorder; ++j) {
-					if (arr[i][j] == 'O') {
+					if (arr[i][j] == 'r' || arr[i][j] == 'd') {
 						correct = false;
 					}
 				}
@@ -150,26 +152,20 @@ void set_ship_to_play_field(char arr[][10], int deck, std::string player_name) {
 			}
 			//иначе перходим снова к вводу координат
 			else {
-				//std::cout << "It is impossible to put a ship in this place!" << std::endl;
+				std::cout << "It is impossible to put a ship in this place!" << std::endl;
 			}
 		}
 	}
-	//заполняем всё поле символами промаха
-	/*for (int i = topBorder; i <= bottomBorder; ++i) {
-		for (int j = leftBorder; j <= rightBorder; ++j) {
-			arr[i][j] = '*';
-		}
-	}*/
 	//устанавливаем горизонтальный  корабль
 	if (direction == 'r') {
 		for (int i = column; i <= column + deck; ++i) {
-			arr[line][i] = 'O';
+			arr[line][i] = 'r';
 		}
 	}
 	//устанавливаем вертикальный корабль
 	if (direction == 'd') {
 		for (int i = line; i <= line + deck; ++i) {
-			arr[i][column] = 'O';
+			arr[i][column] = 'd';
 		}
 	}
 	return;
@@ -177,13 +173,54 @@ void set_ship_to_play_field(char arr[][10], int deck, std::string player_name) {
 
 //функция выстрела, если есть попадание возвращает true
 bool shot_to_ship(char arr1[][10], char arr2[][10], int line, int column) {
-	if (arr2[line][column] != 'O') {
+	if (arr2[line][column] == '~') {
 		arr1[line][column] = '*';
 		return false;
 	}
-	else {
+	else if (arr2[line][column] == 'r') {
+		if (line < 9) {
+			arr1[line + 1][column] = '*';
+		}
+		if (line > 0) {
+			arr1[line - 1][column] = '*';
+		}
+		if (column < 9 && arr2[line][column + 1] == '~') {
+			for (int i = line - 1; i <= line + 1; ++i) {
+				arr1[i][column + 1] = '*';
+			}
+		}
+		if (column > 0 && arr2[line][column - 1] == '~') {
+			for (int i = line - 1; i <= line + 1; ++i) {
+				arr1[i][column - 1] = '*';
+			}
+		}
 		arr2[line][column] = 'X';
 		arr1[line][column] = 'X';
+		return true;
+	}
+	else if (arr2[line][column] == 'd') {
+		if (column < 9) {
+			arr1[line][column + 1] = '*';
+		}
+		if (column > 0) {
+			arr1[line][column - 1] = '*';
+		}
+		if (line < 9 && arr2[line + 1][column] == '~') {
+			for (int i = column - 1; i <= column + 1; ++i) {
+				arr1[line + 1][i] = '*';
+			}
+		}
+		if (line > 0 && arr2[line - 1][column] == '~') {
+			for (int i = column - 1; i <= column + 1; ++i) {
+				arr1[line - 1][i] = '*';
+			}
+		}
+		arr2[line][column] = 'X';
+		arr1[line][column] = 'X';
+		return true;
+	}
+	else if (arr2[line][column] == 'X') {
+		return false;
 	}
 }
 
@@ -238,8 +275,8 @@ int main() {
 	{'~','~','~','~','~','~','~','~','~','~'}, };
 
 	//количество палуб оставшихся у 1 и 2 игроков
-	int player_1Deck = 1;
-	int player_2Deck = 1;
+	int player_1Deck = 2;
+	int player_2Deck = 2;
 
 	//флаг указывающий у кого текущий ход
 	std::string cureentMove = "Player 1";
@@ -251,16 +288,16 @@ int main() {
 	//for (int i = 1; i < 5; ++i) {
 	int i = 1;
 		//внутренний цикл по количеству кораблей
-		//for (int j = 5 - i; j > 0; --j) {
+		for (int j = 3 - i; j > 0; --j) {
 			set_ship_to_play_field(setShipsFieldPlayer_1, i, "Player 1");
-		//}
+		}
 	//}
 
 	//расстановка кораблей второго игрока
 	//for (int i = 1; i < 5; ++i) {
-		//for (int j = 5 - i; j > 0; --j) {
+		for (int j = 3 - i; j > 0; --j) {
 			set_ship_to_play_field(setShipsFieldPlayer_2, i, "Player 2");
-		//}
+		}
 	//}
 
 	//основной цикл, пока winnerFlag не станет 1 или 2
