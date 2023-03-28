@@ -173,56 +173,82 @@ void set_ship_to_play_field(char arr[][10], int deck, std::string player_name) {
 
 //функция выстрела, если есть попадание возвращает true
 bool shot_to_ship(char arr1[][10], char arr2[][10], int line, int column) {
-	if (arr2[line][column] == '~') {
+	//если нет корабля рисуем промах и выходим с false
+	if (arr2[line][column] == '~' || arr2[line][column] == '*') {
 		arr1[line][column] = '*';
 		return false;
 	}
+	//если палуба горизонтального корабля
 	else if (arr2[line][column] == 'r') {
+		//если не нижний край рисуем ниже промах
 		if (line < 9) {
 			arr1[line + 1][column] = '*';
 		}
+		//если не верхний край рисуем выше промах
 		if (line > 0) {
 			arr1[line - 1][column] = '*';
 		}
+		//если не правый край и нет палубы справа
 		if (column < 9 && arr2[line][column + 1] == '~') {
+			//рисуем справа три промаха
 			for (int i = line - 1; i <= line + 1; ++i) {
-				arr1[i][column + 1] = '*';
+				//проверяем границы поля
+				if (i >= 0 && i <= 9) {
+					arr1[i][column + 1] = '*';
+				}
 			}
 		}
+		//если не левый край и нет палубы слева
 		if (column > 0 && arr2[line][column - 1] == '~') {
+			//рисуем слева три промаха
 			for (int i = line - 1; i <= line + 1; ++i) {
-				arr1[i][column - 1] = '*';
+				//проверяем границы поля
+				if (i >= 0 && i <= 9) {
+					arr1[i][column - 1] = '*';
+				}
 			}
 		}
+		//рисуем попадание на обоих полях и выходим с true
 		arr2[line][column] = 'X';
 		arr1[line][column] = 'X';
 		return true;
 	}
+	//если палуба вертикального корабля
 	else if (arr2[line][column] == 'd') {
+		//если не правый край рисуем справа промах
 		if (column < 9) {
 			arr1[line][column + 1] = '*';
 		}
+		//если не левый край рисуем слева промах
 		if (column > 0) {
 			arr1[line][column - 1] = '*';
 		}
+		//если не нижний край и нет палубы внизу
 		if (line < 9 && arr2[line + 1][column] == '~') {
+			//рисуем внизу три промаха
 			for (int i = column - 1; i <= column + 1; ++i) {
+				//проверяем границы поля
 				if (i >= 0 && i <= 9) {
 					arr1[line + 1][i] = '*';
 				}
 			}
 		}
+		//если не верхний край и нет палубы сверху
 		if (line > 0 && arr2[line - 1][column] == '~') {
+			//рисуем сверху три промаха
 			for (int i = column - 1; i <= column + 1; ++i) {
+				//проверяем границы поля
 				if (i >= 0 && i <= 9) {
 					arr1[line - 1][i] = '*';
 				}
 			}
 		}
+		//рисуем попадание на обоих полях и выходим с true
 		arr2[line][column] = 'X';
 		arr1[line][column] = 'X';
 		return true;
 	}
+	//если выстрел в старое место попадания выходим с false
 	else if (arr2[line][column] == 'X') {
 		return false;
 	}
