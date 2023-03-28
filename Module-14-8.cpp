@@ -207,12 +207,16 @@ bool shot_to_ship(char arr1[][10], char arr2[][10], int line, int column) {
 		}
 		if (line < 9 && arr2[line + 1][column] == '~') {
 			for (int i = column - 1; i <= column + 1; ++i) {
-				arr1[line + 1][i] = '*';
+				if (i >= 0 && i <= 9) {
+					arr1[line + 1][i] = '*';
+				}
 			}
 		}
 		if (line > 0 && arr2[line - 1][column] == '~') {
 			for (int i = column - 1; i <= column + 1; ++i) {
-				arr1[line - 1][i] = '*';
+				if (i >= 0 && i <= 9) {
+					arr1[line - 1][i] = '*';
+				}
 			}
 		}
 		arr2[line][column] = 'X';
