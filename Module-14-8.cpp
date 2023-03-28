@@ -305,8 +305,8 @@ int main() {
 	{'~','~','~','~','~','~','~','~','~','~'}, };
 
 	//количество палуб оставшихся у 1 и 2 игроков
-	int player_1Deck = 2;
-	int player_2Deck = 2;
+	int player_1Deck = 10;
+	int player_2Deck = 10;
 
 	//флаг указывающий у кого текущий ход
 	std::string cureentMove = "Player 1";
@@ -315,20 +315,19 @@ int main() {
 
 	//расстановка кораблей первого игрока
 	//внешний цикл по количеству палуб
-	//for (int i = 1; i < 5; ++i) {
-	int i = 1;
+	for (int i = 1; i < 5; ++i) {
 		//внутренний цикл по количеству кораблей
-		for (int j = 3 - i; j > 0; --j) {
+		for (int j = 5 - i; j > 0; --j) {
 			set_ship_to_play_field(setShipsFieldPlayer_1, i, "Player 1");
 		}
-	//}
+	}
 
 	//расстановка кораблей второго игрока
-	//for (int i = 1; i < 5; ++i) {
-		for (int j = 3 - i; j > 0; --j) {
+	for (int i = 1; i < 5; ++i) {
+		for (int j = 5 - i; j > 0; --j) {
 			set_ship_to_play_field(setShipsFieldPlayer_2, i, "Player 2");
 		}
-	//}
+	}
 
 	//основной цикл, пока winnerFlag не станет 1 или 2
 	while (player_1Deck > 0 && player_2Deck > 0) {
