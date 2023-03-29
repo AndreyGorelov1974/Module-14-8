@@ -30,6 +30,22 @@ bool field_2[10][10];*/
 #include <iostream>
 #include <string>
 
+//символьные константы
+const char shipSimbol = 'O';
+const char horizontalShipSimbol = 'r';
+const char verticalShipSimbol = 'd';
+const char hitSimbol = 'X';
+const char missSimbol = '*';
+const char blankSimbol = '~';
+
+//границы поля игры
+const int minLimitArray = 0;
+const int maxLimitArray = 9;
+
+//максимальное количество кораблей и палуб
+const int maxShips = 4;
+const int maxDeck = 4;
+
 //функция получения координат, возвращает трёхзначное число 1XX,
 //вторая цифра - строка игрового поля
 //третья цифра - колонка игрового поля
@@ -48,32 +64,39 @@ int get_coordinates(void) {
 }
 
 //функция получения направления корабля при расстановке, возвращает cимвол
-//r - направо
-//d - вниз
+//horizontalShipSimbol - направо
+//verticalShipSimbol - вниз
 int get_direction(void) {
 	std::string str = "";
-	std::cout << "Set the direction of your ship's location, r - to the right or d - down" << std::endl;
+	std::cout << "Set the direction of your ship's location, " << horizontalShipSimbol << " - to the right or " << verticalShipSimbol << " - down" << std::endl;
 	std::cin >> str;
-	while (str.length() != 1 || (str[0] != 'r' && str[0] != 'd')) {
-		std::cout << "This direction is incorrect. Set r - to the right, or d - down: " << std::endl;
+	while (str.length() != 1 || (str[0] != horizontalShipSimbol && str[0] != verticalShipSimbol)) {
+		std::cout << "This direction is incorrect. Set " << horizontalShipSimbol << " - to the right, or " << verticalShipSimbol << " - down: " << std::endl;
 		std::cin >> str;
 	}
 	return str[0];
 }
 
 //функция отображения игрового поля
-void display_play_field(char arr[][10]) {
+void display_play_field(char arr[][maxLimitArray + 1]) {
 
 	std::cout << "  A B C D E F G H I J" << std::endl;
-	for (int i = 0; i < 10; ++i) {
-		if (i < 9) {
+	for (int i = minLimitArray; i < maxLimitArray + 1; ++i) {
+		//вставляем пробелы где однозначные номера
+		if (i < maxLimitArray) {
 			std::cout << i + 1 << " ";
 		}
 		else {
 			std::cout << i + 1;
 		}
-		for (int j = 0; j < 10; ++j) {
-			std::cout << arr[i][j] << " ";
+		for (int j = minLimitArray; j < maxLimitArray + 1; ++j) {
+			//заменяем служебные символы кораблей на красивые
+			if (arr[i][j] == horizontalShipSimbol || arr[i][j] == verticalShipSimbol) {
+				std::cout << shipSimbol << " ";
+			}
+			else {
+				std::cout << arr[i][j] << " ";
+			}
 		}
 		std::cout << std::endl;
 	}
@@ -81,7 +104,7 @@ void display_play_field(char arr[][10]) {
 }
 
 //функция рассстановки кораблей на игровом поле
-void set_ship_to_play_field(char arr[][10], int deck, std::string player_name) {
+void set_ship_to_play_field(char arr[][maxLimitArray + 1], int deck, std::string player_name) {
 	system("cls");
 	display_play_field(arr);
 	std::cout << player_name << " enter coordinates begin " << deck << " deck ship: ";
@@ -95,7 +118,7 @@ void set_ship_to_play_field(char arr[][10], int deck, std::string player_name) {
 	int line = 0;
 	int column = 0;
 	//направление по умолчанию горизонтальное
-	char direction = 'r';
+	char direction = horizontalShipSimbol;
 	while (true) {
 		int coordinates = get_coordinates();
 		//получаем номер строки и столбца на игровом поле
@@ -106,42 +129,42 @@ void set_ship_to_play_field(char arr[][10], int deck, std::string player_name) {
 			direction = get_direction();
 		}
 		//если выходит за границы игрового поля предупреждаеми и возвращаемся к вводу координат
-		if ((direction == 'r' && (column + deck) > 9) || (direction == 'd' && (line + deck) > 9)) {
-			std::cout << "It is impossible to put a ship in this place!" << std::endl;
+		if ((direction == horizontalShipSimbol && (column + deck) > maxLimitArray) || (direction == verticalShipSimbol && (line + deck) > maxLimitArray)) {
+			std::cout << "It is impossible to put a ship in this place! Enter the coordinates again: ";
 		}
 		else {
 			//задаём границы поля проверки соседних кораблей при направлении корабля горизонтально
-			if (direction == 'r') {
+			if (direction == horizontalShipSimbol) {
 				topBorder = line - 1;
 				bottomBorder = line + 1;
 				leftBorder = column - 1;
 				rightBorder = column + deck + 1;
 			}
 			//задаём границы поля проверки соседних кораблей при направлении корабля вертикально
-			if (direction == 'd') {
+			if (direction == verticalShipSimbol) {
 				topBorder = line - 1;
 				bottomBorder = line + deck + 1;
 				leftBorder = column - 1;
 				rightBorder = column + 1;
 			}
 			//корректируем границы если корабль расположен на краю
-			if (leftBorder < 0) {
-				leftBorder = 0;
+			if (leftBorder < minLimitArray) {
+				leftBorder = minLimitArray;
 			}
-			if (rightBorder > 9) {
-				rightBorder = 9;
+			if (rightBorder > maxLimitArray) {
+				rightBorder = maxLimitArray;
 			}
-			if (topBorder < 0) {
-				topBorder = 0;
+			if (topBorder < minLimitArray) {
+				topBorder = minLimitArray;
 			}
-			if (bottomBorder > 9) {
-				bottomBorder = 9;
+			if (bottomBorder > maxLimitArray) {
+				bottomBorder = maxLimitArray;
 			}
 			bool correct = true;
 			//проверяем наличие кораблей в поле корабля
 			for (int i = topBorder; i <= bottomBorder; ++i) {
 				for (int j = leftBorder; j <= rightBorder; ++j) {
-					if (arr[i][j] == 'r' || arr[i][j] == 'd') {
+					if (arr[i][j] == horizontalShipSimbol || arr[i][j] == verticalShipSimbol) {
 						correct = false;
 					}
 				}
@@ -152,41 +175,41 @@ void set_ship_to_play_field(char arr[][10], int deck, std::string player_name) {
 			}
 			//иначе перходим снова к вводу координат
 			else {
-				std::cout << "It is impossible to put a ship in this place!" << std::endl;
+				std::cout << "It is impossible to put a ship in this place!  Enter the coordinates again: ";
 			}
 		}
 	}
 	//устанавливаем горизонтальный  корабль
-	if (direction == 'r') {
+	if (direction == horizontalShipSimbol) {
 		for (int i = column; i <= column + deck; ++i) {
-			arr[line][i] = 'r';
+			arr[line][i] = horizontalShipSimbol;
 		}
 	}
 	//устанавливаем вертикальный корабль
-	if (direction == 'd') {
+	if (direction == verticalShipSimbol) {
 		for (int i = line; i <= line + deck; ++i) {
-			arr[i][column] = 'd';
+			arr[i][column] = verticalShipSimbol;
 		}
 	}
 	return;
 }
 
 //функция выстрела, если есть попадание возвращает true
-bool shot_to_ship(char arr1[][10], char arr2[][10], int line, int column) {
+bool shot_to_ship(char arr1[][maxLimitArray + 1], char arr2[][maxLimitArray + 1], int line, int column) {
 	//если нет корабля рисуем промах и выходим с false
-	if (arr2[line][column] == '~' || arr2[line][column] == '*') {
-		arr1[line][column] = '*';
+	if (arr2[line][column] == blankSimbol || arr2[line][column] == missSimbol) {
+		arr1[line][column] = missSimbol;
 		return false;
 	}
 	//если палуба горизонтального корабля
-	else if (arr2[line][column] == 'r') {
+	else if (arr2[line][column] == horizontalShipSimbol) {
 		//если не нижний край рисуем ниже промах
 		if (line < 9) {
-			arr1[line + 1][column] = '*';
+			arr1[line + 1][column] = missSimbol;
 		}
 		//если не верхний край рисуем выше промах
 		if (line > 0) {
-			arr1[line - 1][column] = '*';
+			arr1[line - 1][column] = missSimbol;
 		}
 		//если не правый край и нет палубы справа
 		if (column < 9 && arr2[line][column + 1] == '~') {
@@ -256,57 +279,27 @@ bool shot_to_ship(char arr1[][10], char arr2[][10], int line, int column) {
 
 int main() {
 	//поле расстановки кораблей первого игрока
-	char setShipsFieldPlayer_1[10][10] = {
-	{'~','~','~','~','~','~','~','~','~','~'},
-	{'~','~','~','~','~','~','~','~','~','~'},
-	{'~','~','~','~','~','~','~','~','~','~'},
-	{'~','~','~','~','~','~','~','~','~','~'},
-	{'~','~','~','~','~','~','~','~','~','~'},
-	{'~','~','~','~','~','~','~','~','~','~'},
-	{'~','~','~','~','~','~','~','~','~','~'},
-	{'~','~','~','~','~','~','~','~','~','~'},
-	{'~','~','~','~','~','~','~','~','~','~'},
-	{'~','~','~','~','~','~','~','~','~','~'}, };
+	char setShipsFieldPlayer_1[maxLimitArray + 1][maxLimitArray + 1];
 	//поле расстановки кораблей второго игрока
-	char setShipsFieldPlayer_2[10][10] = {
-	{'~','~','~','~','~','~','~','~','~','~'},
-	{'~','~','~','~','~','~','~','~','~','~'},
-	{'~','~','~','~','~','~','~','~','~','~'},
-	{'~','~','~','~','~','~','~','~','~','~'},
-	{'~','~','~','~','~','~','~','~','~','~'},
-	{'~','~','~','~','~','~','~','~','~','~'},
-	{'~','~','~','~','~','~','~','~','~','~'},
-	{'~','~','~','~','~','~','~','~','~','~'},
-	{'~','~','~','~','~','~','~','~','~','~'},
-	{'~','~','~','~','~','~','~','~','~','~'}, };
+	char setShipsFieldPlayer_2[maxLimitArray + 1][maxLimitArray + 1];
 	//игровое поле первого игрока
-	char playFieldPlayer_1[10][10] = {
-	{'~','~','~','~','~','~','~','~','~','~'},
-	{'~','~','~','~','~','~','~','~','~','~'},
-	{'~','~','~','~','~','~','~','~','~','~'},
-	{'~','~','~','~','~','~','~','~','~','~'},
-	{'~','~','~','~','~','~','~','~','~','~'},
-	{'~','~','~','~','~','~','~','~','~','~'},
-	{'~','~','~','~','~','~','~','~','~','~'},
-	{'~','~','~','~','~','~','~','~','~','~'},
-	{'~','~','~','~','~','~','~','~','~','~'},
-	{'~','~','~','~','~','~','~','~','~','~'}, };
+	char playFieldPlayer_1[maxLimitArray + 1][maxLimitArray + 1];
 	//игровое поле второго игрока
-	char playFieldPlayer_2[10][10] = {
-	{'~','~','~','~','~','~','~','~','~','~'},
-	{'~','~','~','~','~','~','~','~','~','~'},
-	{'~','~','~','~','~','~','~','~','~','~'},
-	{'~','~','~','~','~','~','~','~','~','~'},
-	{'~','~','~','~','~','~','~','~','~','~'},
-	{'~','~','~','~','~','~','~','~','~','~'},
-	{'~','~','~','~','~','~','~','~','~','~'},
-	{'~','~','~','~','~','~','~','~','~','~'},
-	{'~','~','~','~','~','~','~','~','~','~'},
-	{'~','~','~','~','~','~','~','~','~','~'}, };
+	char playFieldPlayer_2[maxLimitArray + 1][maxLimitArray + 1];
+
+	//заполняем все массивы символами пустой клеточки
+	for (int i = minLimitArray; i <= maxLimitArray; ++i) {
+		for (int j = minLimitArray; j <= maxLimitArray; ++j) {
+			setShipsFieldPlayer_1[i][j] = blankSimbol;
+			setShipsFieldPlayer_2[i][j] = blankSimbol;
+			playFieldPlayer_1[i][j] = blankSimbol;
+			playFieldPlayer_2[i][j] = blankSimbol;
+		}
+	}
 
 	//количество палуб оставшихся у 1 и 2 игроков
-	int player_1Deck = 10;
-	int player_2Deck = 10;
+	int player_1Deck = 2;
+	int player_2Deck = 2;
 
 	//флаг указывающий у кого текущий ход
 	std::string cureentMove = "Player 1";
@@ -315,19 +308,20 @@ int main() {
 
 	//расстановка кораблей первого игрока
 	//внешний цикл по количеству палуб
-	for (int i = 1; i < 5; ++i) {
-		//внутренний цикл по количеству кораблей
-		for (int j = 5 - i; j > 0; --j) {
-			set_ship_to_play_field(setShipsFieldPlayer_1, i, "Player 1");
-		}
+	//for (int i = 1; i < 5; ++i) {
+	int i = 1;
+	//внутренний цикл по количеству кораблей
+	for (int j = 3 - i; j > 0; --j) {
+		set_ship_to_play_field(setShipsFieldPlayer_1, i, "Player 1");
 	}
+	//}
 
 	//расстановка кораблей второго игрока
-	for (int i = 1; i < 5; ++i) {
-		for (int j = 5 - i; j > 0; --j) {
-			set_ship_to_play_field(setShipsFieldPlayer_2, i, "Player 2");
-		}
+	//for (int i = 1; i < 5; ++i) {
+	for (int j = 3 - i; j > 0; --j) {
+		set_ship_to_play_field(setShipsFieldPlayer_2, i, "Player 2");
 	}
+	//}
 
 	//основной цикл, пока количество палуб одно из игроков не станет 0
 	while (player_1Deck > 0 && player_2Deck > 0) {
@@ -344,7 +338,7 @@ int main() {
 		bool shot = false;
 		//вызываем функцию выстрела в зависимости от хода
 		cureentMove == "Player 1" ? shot = shot_to_ship(playFieldPlayer_1, setShipsFieldPlayer_2, line, column) :
-									shot = shot_to_ship(playFieldPlayer_2, setShipsFieldPlayer_1, line, column);
+			shot = shot_to_ship(playFieldPlayer_2, setShipsFieldPlayer_1, line, column);
 
 		//если есть попадание
 		if (shot) {
