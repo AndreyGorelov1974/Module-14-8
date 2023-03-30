@@ -196,6 +196,12 @@ void set_ship_to_play_field(char arr[][maxLimitArray + 1], int deck, std::string
 
 //функция выстрела, если есть попадание возвращает true
 bool shot_to_ship(char arr1[][maxLimitArray + 1], char arr2[][maxLimitArray + 1], int line, int column) {
+	//инициализируем границы поля промахов вокруг корабля
+	int leftBorder = 0;
+	int rightBorder = 0;
+	int topBorder = 0;
+	int bottomBorder = 0;
+
 	//если нет корабля рисуем промах и выходим с false
 	if (arr2[line][column] == blankSimbol || arr2[line][column] == missSimbol) {
 		arr1[line][column] = missSimbol;
@@ -203,37 +209,55 @@ bool shot_to_ship(char arr1[][maxLimitArray + 1], char arr2[][maxLimitArray + 1]
 	}
 	//если палуба горизонтального корабля
 	else if (arr2[line][column] == horizontalShipSimbol) {
-		//если не нижний край рисуем ниже промах
-		if (line < 9) {
-			arr1[line + 1][column] = missSimbol;
-		}
-		//если не верхний край рисуем выше промах
-		if (line > 0) {
-			arr1[line - 1][column] = missSimbol;
-		}
-		//если не правый край и нет палубы справа
-		if (column < 9 && arr2[line][column + 1] == '~') {
-			//рисуем справа три промаха
-			for (int i = line - 1; i <= line + 1; ++i) {
-				//проверяем границы поля
-				if (i >= 0 && i <= 9) {
-					arr1[i][column + 1] = '*';
-				}
-			}
-		}
-		//если не левый край и нет палубы слева
-		if (column > 0 && arr2[line][column - 1] == '~') {
-			//рисуем слева три промаха
-			for (int i = line - 1; i <= line + 1; ++i) {
-				//проверяем границы поля
-				if (i >= 0 && i <= 9) {
-					arr1[i][column - 1] = '*';
-				}
-			}
-		}
-		//рисуем попадание на обоих полях и выходим с true
+		//рисуем попадание на обоих полях
 		arr2[line][column] = 'X';
 		arr1[line][column] = 'X';
+		//выставляем верхнюю и нижнюю границы для разных положений на краю и нет
+		if (line == minLimitArray) {
+			topBorder = line + 1;
+			bottomBorder = line + 1;
+		}
+		else if (line == maxLimitArray) {
+			topBorder = line - 1;
+			bottomBorder = line - 1;
+		}
+		else {
+			topBorder = line - 1;
+			bottomBorder = line + 1;
+		}
+		rightBorder = column;
+		leftBorder = column;
+
+		//если не правая граница поля ищем крайнее правое попадание
+		if (rightBorder < maxLimitArray) {
+			while (arr2[line][rightBorder] == hitSimbol) {
+				++rightBorder;
+			}
+			//если нашли целую палубу выходим с true 
+			if (arr2[line][rightBorder] == horizontalShipSimbol) {
+				return true;
+			}
+		}
+		//если не левая граница поля ищем крайнее левое попадание
+		if (leftBorder > minLimitArray) {
+			while (arr2[line][leftBorder] == hitSimbol) {
+				--leftBorder;
+			}
+			//если нашли целую палубу выходим с true 
+			if (arr2[line][leftBorder] == horizontalShipSimbol) {
+				return true;
+			}
+		}
+		for (int i = leftBorder; i <= rightBorder; ++i) {
+			arr1[topBorder][i] = missSimbol;
+			arr1[bottomBorder][i] = missSimbol;
+		}
+		if (arr1[line][leftBorder] != hitSimbol) {
+			arr1[line][leftBorder] = missSimbol;
+		}
+		if (arr1[line][rightBorder] != hitSimbol) {
+			arr1[line][rightBorder] = missSimbol;
+		}
 		return true;
 	}
 	//если палуба вертикального корабля
@@ -309,7 +333,7 @@ int main() {
 	//расстановка кораблей первого игрока
 	//внешний цикл по количеству палуб
 	//for (int i = 1; i < 5; ++i) {
-	int i = 1;
+	int i = 2;
 	//внутренний цикл по количеству кораблей
 	for (int j = 3 - i; j > 0; --j) {
 		set_ship_to_play_field(setShipsFieldPlayer_1, i, "Player 1");
