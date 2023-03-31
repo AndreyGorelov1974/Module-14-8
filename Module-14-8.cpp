@@ -118,7 +118,7 @@ void set_ship_to_play_field(char arr[][maxLimitArray + 1], int deck, std::string
 	int line = 0;
 	int column = 0;
 	//направление по умолчанию горизонтальное
-	char direction = horizontalShipSimbol;
+	char direction = verticalShipSimbol;
 	while (true) {
 		int coordinates = get_coordinates();
 		//получаем номер строки и столбца на игровом поле
@@ -196,15 +196,6 @@ void set_ship_to_play_field(char arr[][maxLimitArray + 1], int deck, std::string
 
 //функция выстрела, если есть попадание возвращает true
 bool shot_to_ship(char arr1[][maxLimitArray + 1], char arr2[][maxLimitArray + 1], int line, int column) {
-	//инициализируем границы поля промахов вокруг корабля
-	int leftBorder = 0;
-	int rightBorder = 0;
-	int topBorder = 0;
-	int bottomBorder = 0;
-	int begin = 0;
-	int end = 0;
-
-
 	//если нет корабля рисуем промах и выходим с false
 	if (arr2[line][column] == blankSimbol || arr2[line][column] == missSimbol) {
 		arr1[line][column] = missSimbol;
@@ -215,10 +206,9 @@ bool shot_to_ship(char arr1[][maxLimitArray + 1], char arr2[][maxLimitArray + 1]
 		//рисуем попадание на обоих полях
 		arr2[line][column] = hitSimbol;
 		arr1[line][column] = hitSimbol;
-		
-		begin = column;
-		end = column;
-
+		//инициализируем начало и конец корабля в точке выстрела
+		int begin = column;
+		int end = column;
 		//если не правая граница поля ищем крайнее правое попадание
 		if (end < maxLimitArray) {
 			while (arr2[line][end + 1] == hitSimbol) {
@@ -280,38 +270,71 @@ bool shot_to_ship(char arr1[][maxLimitArray + 1], char arr2[][maxLimitArray + 1]
 		return true;
 	}
 	//если палуба вертикального корабля
-	else if (arr2[line][column] == 'd') {
-		//если не правый край рисуем справа промах
-		if (column < 9) {
-			arr1[line][column + 1] = '*';
-		}
-		//если не левый край рисуем слева промах
-		if (column > 0) {
-			arr1[line][column - 1] = '*';
-		}
-		//если не нижний край и нет палубы внизу
-		if (line < 9 && arr2[line + 1][column] == '~') {
-			//рисуем внизу три промаха
-			for (int i = column - 1; i <= column + 1; ++i) {
-				//проверяем границы поля
-				if (i >= 0 && i <= 9) {
-					arr1[line + 1][i] = '*';
-				}
+	else if (arr2[line][column] == verticalShipSimbol) {
+		//рисуем попадание на обоих полях
+		arr2[line][column] = hitSimbol;
+		arr1[line][column] = hitSimbol;
+		//инициализируем начало и конец корабля в точке выстрела
+		int begin = line;
+		int end = line;
+		//если не нижняя граница поля ищем крайнее нижнее попадание
+		if (end < maxLimitArray) {
+			while (arr2[end + 1][column] == hitSimbol) {
+				++end;
+			}
+			//если нашли целую палубу выходим с true 
+			if (arr2[end + 1][column] == verticalShipSimbol) {
+				return true;
 			}
 		}
-		//если не верхний край и нет палубы сверху
-		if (line > 0 && arr2[line - 1][column] == '~') {
-			//рисуем сверху три промаха
-			for (int i = column - 1; i <= column + 1; ++i) {
-				//проверяем границы поля
-				if (i >= 0 && i <= 9) {
-					arr1[line - 1][i] = '*';
-				}
+		//если не верхняя граница поля ищем крайнее верхнее попадание
+		if (begin > minLimitArray) {
+			while (arr2[begin - 1][column] == hitSimbol) {
+				--begin;
+			}
+			//если нашли целую палубу выходим с true 
+			if (arr2[begin - 1][column] == verticalShipSimbol) {
+				return true;
 			}
 		}
-		//рисуем попадание на обоих полях и выходим с true
-		arr2[line][column] = 'X';
-		arr1[line][column] = 'X';
+		//если не левая граница поля
+		if (column > minLimitArray) {
+			//рисуем промахи левее корабля
+			for (int i = begin; i <= end; ++i) {
+				arr1[i][column - 1] = missSimbol;
+			}
+			//если не верхняя граница поля рисуем левый верхний промах
+			if (begin > minLimitArray) {
+				arr1[begin - 1][column - 1] = missSimbol;
+			}
+			//если не нижняя граница поля рисуем левый нижний промах
+			if (end < maxLimitArray) {
+				arr1[end + 1][column - 1] = missSimbol;
+			}
+		}
+		//если не правая граница поля
+		if (column < maxLimitArray) {
+			//рисуем промахи правее корабля
+			for (int i = begin; i <= end; ++i) {
+				arr1[i][column + 1] = missSimbol;
+			}
+			//если не верхняя граница поля рисуем правый верхний промах
+			if (begin > minLimitArray) {
+				arr1[begin - 1][column + 1] = missSimbol;
+			}
+			//если не нижняя граница поля рисуем правый нижний промах
+			if (end < maxLimitArray) {
+				arr1[end + 1][column + 1] = missSimbol;
+			}
+		}
+		//если не верхняя граница поля рисуем верхний промах
+		if (begin > minLimitArray) {
+			arr1[begin - 1][column] = missSimbol;
+		}
+		//если не нижняя граница поля рисуем нижний промах
+		if (end < maxLimitArray) {
+			arr1[end + 1][column] = missSimbol;
+		}
 		return true;
 	}
 	//если выстрел в старое место попадания выходим с false
@@ -341,8 +364,8 @@ int main() {
 	}
 
 	//количество палуб оставшихся у 1 и 2 игроков
-	int player_1Deck = 2;
-	int player_2Deck = 2;
+	int player_1Deck = 20;
+	int player_2Deck = 20;
 
 	//флаг указывающий у кого текущий ход
 	std::string cureentMove = "Player 1";
@@ -351,20 +374,19 @@ int main() {
 
 	//расстановка кораблей первого игрока
 	//внешний цикл по количеству палуб
-	//for (int i = 1; i < 5; ++i) {
-	int i = 1;
+	for (int i = maxDeck + 1; i >= 1; --i) {
 	//внутренний цикл по количеству кораблей
-	for (int j = 3 - i; j > 0; --j) {
+	for (int j = maxShips + 1 - i; j > 0; --j) {
 		set_ship_to_play_field(setShipsFieldPlayer_1, i, "Player 1");
 	}
-	//}
+	}
 
 	//расстановка кораблей второго игрока
-	//for (int i = 1; i < 5; ++i) {
-	for (int j = 3 - i; j > 0; --j) {
+	for (int i = maxDeck + 1; i >= 1; --i) {
+	for (int j = maxShips + 1 - i; j > 0; --j) {
 		set_ship_to_play_field(setShipsFieldPlayer_2, i, "Player 2");
 	}
-	//}
+	}
 
 	//основной цикл, пока количество палуб одно из игроков не станет 0
 	while (player_1Deck > 0 && player_2Deck > 0) {
