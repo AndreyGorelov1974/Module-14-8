@@ -315,7 +315,7 @@ bool shot_to_ship(char arr1[][maxLimitArray + 1], char arr2[][maxLimitArray + 1]
 		return true;
 	}
 	//если выстрел в старое место попадания выходим с false
-	else if (arr2[line][column] == 'X') {
+	else if (arr2[line][column] == hitSimbol) {
 		return false;
 	}
 }
